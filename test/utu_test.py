@@ -31,7 +31,7 @@ class UtuTest(unittest.TestCase):
                 state['teardown_ran'] = True
             
             def test_foo(self):
-                #self.assert_true(True)
+                self.assert_true(True)
                 state['asserted'] = True
         
         run_test(Testee)

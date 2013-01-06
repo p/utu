@@ -1,3 +1,5 @@
+import re
+
 def forward(cls, old_method, new_method):
     def fn(self):
         # call e.g. setUp on all parents of the adjusted base
@@ -18,6 +20,8 @@ class adjusted_base(object):
     def teardown(self):
         pass
 
+all_cap_re = re.compile('([a-z0-9])([A-Z])')
+
 def adjust_test_base(cls):
     class adjusted_cls(adjusted_base, cls):
         pass
@@ -26,6 +30,12 @@ def adjust_test_base(cls):
     for new_method in methods:
         old_method = methods[new_method]
         forward(adjusted_cls, old_method, new_method)
+    
+    for method in dir(adjusted_cls):
+        if method.startswith('assert'):
+            converted_name = all_cap_re.sub(r'\1_\2', method).lower()
+            if converted_name != method:
+                setattr(adjusted_cls, converted_name, getattr(adjusted_cls, method))
     
     return adjusted_cls
 
