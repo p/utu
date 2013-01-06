@@ -1,6 +1,8 @@
 import re
 
-def forward(cls, old_method, new_method):
+def _create_forwarder(cls, old_method, new_method):
+    # The code for instance and class methods is identical, with
+    # self replaced by class (not to be confused with cls argument above)
     def fn(self):
         # call e.g. setUp on all parents of the adjusted base
         getattr(super(cls, self), old_method)()
@@ -11,6 +13,15 @@ def forward(cls, old_method, new_method):
         if new_fn:
             new_fn()
     
+    return fn
+
+def forward(cls, old_method, new_method):
+    fn = _create_forwarder(cls, old_method, new_method)
+    setattr(cls, old_method, fn)
+
+def forward_classmethod(cls, old_method, new_method):
+    fn = _create_forwarder(cls, old_method, new_method)
+    fn = classmethod(fn)
     setattr(cls, old_method, fn)
 
 class adjusted_base(object):
@@ -26,10 +37,23 @@ def adjust_test_base(cls):
     class adjusted_cls(adjusted_base, cls):
         pass
     
-    methods = {'setup': 'setUp', 'teardown': 'tearDown'}
+    methods = {
+        'setup': 'setUp',
+        'teardown': 'tearDown',
+    }
+    
     for new_method in methods:
         old_method = methods[new_method]
         forward(adjusted_cls, old_method, new_method)
+    
+    classmethods = {
+        'setup_class': 'setUpClass',
+        'teardown_class': 'tearDownClass',
+    }
+    
+    for new_method in classmethods:
+        old_method = classmethods[new_method]
+        forward_classmethod(adjusted_cls, old_method, new_method)
     
     for method in dir(adjusted_cls):
         if method.startswith('assert'):

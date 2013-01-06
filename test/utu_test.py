@@ -24,6 +24,14 @@ class UtuTest(unittest.TestCase):
         state = {}
         
         class Testee(utu.adjusted_unittest_base()):
+            @classmethod
+            def setup_class(cls):
+                state['setup_class_ran'] = True
+            
+            @classmethod
+            def teardown_class(cls):
+                state['teardown_class_ran'] = True
+            
             def setup(self):
                 state['setup_ran'] = True
             
@@ -36,6 +44,8 @@ class UtuTest(unittest.TestCase):
         
         invoke(Testee)
         
+        self.assertTrue('setup_class_ran' in state)
+        self.assertTrue('teardown_class_ran' in state)
         self.assertTrue('setup_ran' in state)
         self.assertTrue('teardown_ran' in state)
         self.assertTrue('asserted' in state)
