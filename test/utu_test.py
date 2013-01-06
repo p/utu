@@ -1,7 +1,7 @@
 import utu
 import unittest
 
-def run_test(test):
+def invoke(test):
     runner = unittest.runner.TextTestRunner()
     loader = unittest.loader.defaultTestLoader
     test = loader.loadTestsFromTestCase(test)
@@ -16,7 +16,7 @@ class UtuTest(unittest.TestCase):
             def test_method(self):
                 state['test_ran'] = True
         
-        run_test(Testee)
+        invoke(Testee)
         
         self.assertTrue('test_ran' in state)
     
@@ -34,7 +34,7 @@ class UtuTest(unittest.TestCase):
                 self.assert_true(True)
                 state['asserted'] = True
         
-        run_test(Testee)
+        invoke(Testee)
         
         self.assertTrue('setup_ran' in state)
         self.assertTrue('teardown_ran' in state)
