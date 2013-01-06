@@ -20,7 +20,19 @@ class UtuTest(unittest.TestCase):
         
         self.assertTrue('test_ran' in state)
     
-    def test_basic(self):
+    def test_assertion(self):
+        state = {}
+        
+        class Testee(utu.adjusted_unittest_base()):
+            def test_foo(self):
+                self.assert_true(True)
+                state['asserted'] = True
+        
+        invoke(Testee)
+        
+        self.assertTrue('asserted' in state)
+    
+    def test_setup(self):
         state = {}
         
         class Testee(utu.adjusted_unittest_base()):
@@ -36,6 +48,44 @@ class UtuTest(unittest.TestCase):
                 state['setup_ran'] = True
             
             def teardown(self):
+                state['teardown_ran'] = True
+            
+            def test_foo(self):
+                self.assert_true(True)
+                state['asserted'] = True
+        
+        invoke(Testee)
+        
+        self.assertTrue('setup_class_ran' in state)
+        self.assertTrue('teardown_class_ran' in state)
+        self.assertTrue('setup_ran' in state)
+        self.assertTrue('teardown_ran' in state)
+        self.assertTrue('asserted' in state)
+    
+    def test_setup_with_super(self):
+        state = {}
+        
+        class Testee(utu.adjusted_unittest_base()):
+            @classmethod
+            def setup_class(cls):
+                super(Testee, cls).setup_class()
+                
+                state['setup_class_ran'] = True
+            
+            @classmethod
+            def teardown_class(cls):
+                super(Testee, cls).teardown_class()
+                
+                state['teardown_class_ran'] = True
+            
+            def setup(self):
+                super(Testee, self).setup()
+                
+                state['setup_ran'] = True
+            
+            def teardown(self):
+                super(Testee, self).teardown()
+                
                 state['teardown_ran'] = True
             
             def test_foo(self):

@@ -30,6 +30,14 @@ class adjusted_base(object):
     
     def teardown(self):
         pass
+    
+    @classmethod
+    def setup_class(cls):
+        pass
+    
+    @classmethod
+    def teardown_class(cls):
+        pass
 
 all_cap_re = re.compile('([a-z0-9])([A-Z])')
 
