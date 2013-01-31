@@ -22,8 +22,8 @@ A possible workaround is to use setupclass/teardownclasss instead.
 Tests
 -----
 
-.. image:: https://api.travis-ci.org/p/owebunit.png
-  :target: https://travis-ci.org/p/owebunit
+.. image:: https://api.travis-ci.org/p/utu.png
+  :target: https://travis-ci.org/p/utu
 
 License
 -------
