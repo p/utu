@@ -28,4 +28,4 @@ Tests
 License
 -------
 
-MIT.
+Released under the 2 clause BSD license.
